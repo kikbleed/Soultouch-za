@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Your Order - Soultouch ZA</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="/assets/soultouch-za.png" alt="Soul Touch Movement Logo" />
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html#home" class="nav-link">Home</a></li>
+                <li><a href="index.html#trending" class="nav-link">Trending</a></li>
+                <li><a href="index.html#products" class="nav-link">All Products</a></li>
+                <li><a href="tracking.html" class="nav-link">Track Order</a></li>
+            </ul>
+            <div class="cart-icon">
+                <a href="cart.html" class="cart-link">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    <span class="cart-count">0</span>
+                </a>
+            </div>
+            <button class="mobile-menu-toggle" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Tracking Page Content -->
+    <section class="tracking-section">
+        <div class="container">
+            <h1 class="tracking-page-title">Track Your Order</h1>
+            
+            <!-- Tracking Input Section -->
+            <div class="tracking-input-container">
+                <div class="tracking-input-glass">
+                    <h2 class="tracking-input-title">Enter Your Order Number</h2>
+                    <p class="tracking-input-subtitle">Enter your order number to view the current status of your order</p>
+                    <form id="trackingForm" class="tracking-form">
+                        <div class="tracking-input-group">
+                            <input 
+                                type="text" 
+                                id="orderNumberInput" 
+                                class="tracking-input" 
+                                placeholder="e.g., ST-12345678"
+                                required
+                            >
+                            <button type="submit" class="tracking-submit-btn">Track Order</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Tracking Result Section -->
+            <div id="trackingResult" class="tracking-result-container" style="display: none;">
+                <!-- Order Details -->
+                <div class="tracking-order-details">
+                    <h2 class="tracking-section-title">Order Details</h2>
+                    <div class="tracking-details-grid">
+                        <div class="tracking-detail-item">
+                            <span class="tracking-detail-label">Order Number</span>
+                            <span class="tracking-detail-value" id="trackingOrderNumber">-</span>
+                        </div>
+                        <div class="tracking-detail-item">
+                            <span class="tracking-detail-label">Customer Name</span>
+                            <span class="tracking-detail-value" id="trackingCustomerName">-</span>
+                        </div>
+                        <div class="tracking-detail-item">
+                            <span class="tracking-detail-label">Delivery Address</span>
+                            <span class="tracking-detail-value" id="trackingDeliveryAddress">-</span>
+                        </div>
+                        <div class="tracking-detail-item">
+                            <span class="tracking-detail-label">Estimated Delivery</span>
+                            <span class="tracking-detail-value" id="trackingEstimatedDelivery">-</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Order Items -->
+                <div class="tracking-order-items">
+                    <h2 class="tracking-section-title">Order Items</h2>
+                    <div id="trackingItemsList" class="tracking-items-list">
+                        <!-- Items will be populated by JavaScript -->
+                    </div>
+                </div>
+                
+                <!-- Tracking Timeline -->
+                <div class="tracking-timeline-container">
+                    <h2 class="tracking-section-title">Order Status</h2>
+                    <div class="tracking-timeline" id="trackingTimeline">
+                        <!-- Timeline will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- No Order Found Message -->
+            <div id="trackingNotFound" class="tracking-not-found" style="display: none;">
+                <div class="tracking-not-found-content">
+                    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.5; margin-bottom: 1.5rem;">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    <h2>Order Not Found</h2>
+                    <p>We couldn't find an order with that order number. Please check and try again.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <span class="toast-message"></span>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="tracking.js"></script>
+</body>
+</html>
+

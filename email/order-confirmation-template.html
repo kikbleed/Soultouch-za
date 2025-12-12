@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation - Soultouch ZA</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; background-color: #1A1B1D; color: #E8E8E8;">
+    <!-- Email Container -->
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #0A0A0B; padding: 20px 0;">
+        <tr>
+            <td align="center" style="padding: 20px 0;">
+                <!-- Main Content Table -->
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="max-width: 600px; background-color: #1A1B1D; border-radius: 20px; overflow: hidden; box-shadow: 0 8px 30px rgba(0,0,0,0.35);">
+                    
+                    <!-- Header -->
+                    <tr>
+                        <td style="padding: 40px 30px 30px; text-align: center; background: linear-gradient(135deg, rgba(174, 177, 181, 0.1) 0%, rgba(196, 185, 152, 0.1) 100%);">
+                            <img src="https://YOURDOMAIN/assets/soultouch-za.png" width="200" alt="Soul Touch Movement" style="display:block; margin:0 auto 20px; filter:contrast(1.35) brightness(1.2);" />
+                            <p style="margin: 0; font-size: 14px; color: #B8B8B9; text-transform: uppercase; letter-spacing: 1px;">Order Confirmation</p>
+                        </td>
+                    </tr>
+                    
+                    <!-- Order Number Section -->
+                    <tr>
+                        <td style="padding: 30px; text-align: center; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                            <p style="margin: 0 0 10px; font-size: 14px; color: #B8B8B9;">Order Number</p>
+                            <h2 style="margin: 0; font-size: 32px; font-weight: 700; color: #C4B998; letter-spacing: 2px;">{{ORDER_NUMBER}}</h2>
+                        </td>
+                    </tr>
+                    
+                    <!-- Customer Info -->
+                    <tr>
+                        <td style="padding: 30px;">
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                <tr>
+                                    <td style="padding-bottom: 20px;">
+                                        <p style="margin: 0 0 8px; font-size: 12px; color: #B8B8B9; text-transform: uppercase; letter-spacing: 1px;">Customer Name</p>
+                                        <p style="margin: 0; font-size: 18px; font-weight: 600; color: #E8E8E8;">{{CUSTOMER_NAME}}</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    
+                    <!-- Order Items -->
+                    <tr>
+                        <td style="padding: 0 30px 30px;">
+                            <h3 style="margin: 0 0 20px; font-size: 18px; font-weight: 700; color: #E8E8E8;">Ordered Items</h3>
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: rgba(255, 255, 255, 0.06); border-radius: 12px; overflow: hidden;">
+                                {{ORDER_ITEMS}}
+                            </table>
+                        </td>
+                    </tr>
+                    
+                    <!-- Totals -->
+                    <tr>
+                        <td style="padding: 0 30px 30px;">
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                <tr>
+                                    <td style="padding: 15px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                            <tr>
+                                                <td style="font-size: 14px; color: #B8B8B9;">Subtotal</td>
+                                                <td align="right" style="font-size: 14px; font-weight: 600; color: #E8E8E8;">{{SUBTOTAL}}</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 15px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                            <tr>
+                                                <td style="font-size: 14px; color: #B8B8B9;">Delivery</td>
+                                                <td align="right" style="font-size: 14px; font-weight: 600; color: #E8E8E8;">{{DELIVERY_COST}}</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 20px 0 0;">
+                                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                            <tr>
+                                                <td style="font-size: 18px; font-weight: 700; color: #C4B998;">Total</td>
+                                                <td align="right" style="font-size: 24px; font-weight: 700; color: #C4B998;">{{TOTAL}}</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    
+                    <!-- Delivery Info -->
+                    <tr>
+                        <td style="padding: 0 30px 30px;">
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: rgba(196, 185, 152, 0.1); border-radius: 12px; padding: 20px;">
+                                <tr>
+                                    <td style="padding-bottom: 15px;">
+                                        <p style="margin: 0 0 8px; font-size: 12px; color: #B8B8B9; text-transform: uppercase; letter-spacing: 1px;">Delivery Method</p>
+                                        <p style="margin: 0; font-size: 16px; font-weight: 600; color: #E8E8E8;">{{DELIVERY_METHOD}}</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding-bottom: 15px;">
+                                        <p style="margin: 0 0 8px; font-size: 12px; color: #B8B8B9; text-transform: uppercase; letter-spacing: 1px;">Delivery Address</p>
+                                        <p style="margin: 0; font-size: 14px; color: #E8E8E8; line-height: 1.6;">{{DELIVERY_ADDRESS}}</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <p style="margin: 0 0 8px; font-size: 12px; color: #B8B8B9; text-transform: uppercase; letter-spacing: 1px;">Estimated Delivery Date</p>
+                                        <p style="margin: 0; font-size: 16px; font-weight: 600; color: #C4B998;">{{ESTIMATED_DELIVERY}}</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    
+                    <!-- CTA Button -->
+                    <tr>
+                        <td style="padding: 0 30px 30px; text-align: center;">
+                            <a href="{{TRACK_ORDER_URL}}" style="display: inline-block; padding: 16px 40px; background-color: #1A1B1D; color: #E8E8E8; text-decoration: none; border: 1px solid rgba(255, 255, 255, 0.28); border-radius: 20px; font-weight: 600; font-size: 16px; transition: all 0.3s ease;">Track Your Order</a>
+                        </td>
+                    </tr>
+                    
+                    <!-- Footer -->
+                    <tr>
+                        <td style="padding: 30px; background-color: rgba(255, 255, 255, 0.06); border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                            <p style="margin: 0 0 15px; font-size: 12px; color: #B8B8B9; text-align: center; line-height: 1.6;">
+                                <strong style="color: #E8E8E8;">Soultouch ZA</strong><br>
+                                123 Business Street, City, 0000<br>
+                                South Africa
+                            </p>
+                            <p style="margin: 0; font-size: 11px; color: #AEB1B5; text-align: center; font-style: italic;">
+                                This is a demo email. No payment was processed.
+                            </p>
+                        </td>
+                    </tr>
+                    
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
+

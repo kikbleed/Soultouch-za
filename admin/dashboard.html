@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Soultouch ZA</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="admin-styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="admin-logo">
+                <h2>Soultouch ZA</h2>
+                <p>Admin Panel</p>
+            </div>
+            <nav class="admin-nav">
+                <a href="dashboard.html" class="admin-nav-link active">
+                    <span>📊</span> Dashboard
+                </a>
+                <a href="orders.html" class="admin-nav-link">
+                    <span>📦</span> Orders
+                </a>
+                <a href="products.html" class="admin-nav-link">
+                    <span>👟</span> Products
+                </a>
+                <a href="inventory.html" class="admin-nav-link">
+                    <span>📈</span> Inventory
+                </a>
+                <a href="../index.html" class="admin-nav-link">
+                    <span>🏠</span> View Store
+                </a>
+                <a href="#" class="admin-nav-link" id="logoutBtn">
+                    <span>🚪</span> Logout
+                </a>
+            </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="admin-main">
+            <header class="admin-header">
+                <h1>Dashboard</h1>
+                <p>Overview of your store performance</p>
+            </header>
+            
+            <!-- Stats Cards -->
+            <div class="admin-stats-grid">
+                <div class="admin-stat-card">
+                    <div class="admin-stat-icon">💰</div>
+                    <div class="admin-stat-content">
+                        <p class="admin-stat-label">Total Revenue</p>
+                        <h3 class="admin-stat-value" id="totalRevenue">R0</h3>
+                    </div>
+                </div>
+                
+                <div class="admin-stat-card">
+                    <div class="admin-stat-icon">📦</div>
+                    <div class="admin-stat-content">
+                        <p class="admin-stat-label">Total Orders</p>
+                        <h3 class="admin-stat-value" id="totalOrders">0</h3>
+                    </div>
+                </div>
+                
+                <div class="admin-stat-card">
+                    <div class="admin-stat-icon">⏳</div>
+                    <div class="admin-stat-content">
+                        <p class="admin-stat-label">Pending Orders</p>
+                        <h3 class="admin-stat-value" id="pendingOrders">0</h3>
+                    </div>
+                </div>
+                
+                <div class="admin-stat-card">
+                    <div class="admin-stat-icon">✅</div>
+                    <div class="admin-stat-content">
+                        <p class="admin-stat-label">Completed Orders</p>
+                        <h3 class="admin-stat-value" id="completedOrders">0</h3>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Orders -->
+            <section class="admin-section">
+                <h2 class="admin-section-title">Recent Orders</h2>
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Order Number</th>
+                                <th>Customer</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentOrdersTable">
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 2rem;">
+                                    Loading...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <script src="admin.js"></script>
+    <script>
+        // Load dashboard data
+        async function loadDashboard() {
+            try {
+                const response = await fetch('/api/admin/stats', {
+                    credentials: 'include'
+                });
+                
+                if (!response.ok) {
+                    if (response.status === 403) {
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    throw new Error('Failed to load dashboard data');
+                }
+                
+                const data = await response.json();
+                
+                // Update stats
+                document.getElementById('totalRevenue').textContent = `R${data.totalRevenue || 0}`;
+                document.getElementById('totalOrders').textContent = data.totalOrders || 0;
+                document.getElementById('pendingOrders').textContent = data.pendingOrders || 0;
+                document.getElementById('completedOrders').textContent = data.completedOrders || 0;
+                
+                // Render recent orders
+                renderRecentOrders(data.recentOrders || []);
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                document.getElementById('recentOrdersTable').innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 2rem; color: #ff6b6b;">
+                            Error loading dashboard data
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+        
+        function renderRecentOrders(orders) {
+            const tbody = document.getElementById('recentOrdersTable');
+            
+            if (orders.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 2rem;">
+                            No orders yet
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = orders.map(order => `
+                <tr>
+                    <td><strong>${order.orderNumber}</strong></td>
+                    <td>${order.customerName}</td>
+                    <td>R${order.total}</td>
+                    <td><span class="admin-status-badge status-${order.orderStatus}">${formatStatus(order.orderStatus)}</span></td>
+                    <td>${formatDate(order.createdAt)}</td>
+                    <td>
+                        <a href="orders.html?id=${order.id}" class="admin-btn-small">View</a>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function formatStatus(status) {
+            return status.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        }
+        
+        function formatDate(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleDateString('en-ZA', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        
+        // Load dashboard on page load
+        document.addEventListener('DOMContentLoaded', loadDashboard);
+    </script>
+</body>
+</html>
+

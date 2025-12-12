@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders Management - Soultouch ZA Admin</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="admin-styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="admin-logo">
+                <h2>Soultouch ZA</h2>
+                <p>Admin Panel</p>
+            </div>
+            <nav class="admin-nav">
+                <a href="dashboard.html" class="admin-nav-link">
+                    <span>📊</span> Dashboard
+                </a>
+                <a href="orders.html" class="admin-nav-link active">
+                    <span>📦</span> Orders
+                </a>
+                <a href="products.html" class="admin-nav-link">
+                    <span>👟</span> Products
+                </a>
+                <a href="inventory.html" class="admin-nav-link">
+                    <span>📈</span> Inventory
+                </a>
+                <a href="../index.html" class="admin-nav-link">
+                    <span>🏠</span> View Store
+                </a>
+                <a href="#" class="admin-nav-link" id="logoutBtn">
+                    <span>🚪</span> Logout
+                </a>
+            </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="admin-main">
+            <header class="admin-header">
+                <h1>Orders Management</h1>
+                <p>View and manage all customer orders</p>
+            </header>
+            
+            <!-- Orders Table -->
+            <section class="admin-section">
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Order Number</th>
+                                <th>Customer</th>
+                                <th>Email</th>
+                                <th>Total</th>
+                                <th>Payment</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTable">
+                            <tr>
+                                <td colspan="8" style="text-align: center; padding: 2rem;">
+                                    Loading orders...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <!-- Order Detail Modal -->
+    <div id="orderModal" class="admin-modal" style="display: none;">
+        <div class="admin-modal-overlay" onclick="closeOrderModal()"></div>
+        <div class="admin-modal-content">
+            <div class="admin-modal-header">
+                <h2>Order Details</h2>
+                <button class="admin-modal-close" onclick="closeOrderModal()">×</button>
+            </div>
+            <div class="admin-modal-body" id="orderModalBody">
+                <!-- Order details will be loaded here -->
+            </div>
+        </div>
+    </div>
+    
+    <script src="admin.js"></script>
+    <script>
+        let allOrders = [];
+        
+        // Load all orders
+        async function loadOrders() {
+            try {
+                const response = await fetch('/api/admin/orders', {
+                    credentials: 'include'
+                });
+                
+                if (!response.ok) {
+                    if (response.status === 403) {
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    throw new Error('Failed to load orders');
+                }
+                
+                const data = await response.json();
+                allOrders = data.orders || [];
+                renderOrders(allOrders);
+            } catch (error) {
+                console.error('Error loading orders:', error);
+                document.getElementById('ordersTable').innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 2rem; color: #ff6b6b;">
+                            Error loading orders
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+        
+        function renderOrders(orders) {
+            const tbody = document.getElementById('ordersTable');
+            
+            if (orders.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 2rem;">
+                            No orders found
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = orders.map(order => `
+                <tr>
+                    <td><strong>${order.orderNumber}</strong></td>
+                    <td>${order.customerName}</td>
+                    <td>${order.customerEmail}</td>
+                    <td>R${order.total}</td>
+                    <td><span class="admin-status-badge status-${order.paymentStatus}">${order.paymentStatus}</span></td>
+                    <td><span class="admin-status-badge status-${order.orderStatus}">${formatStatus(order.orderStatus)}</span></td>
+                    <td>${formatDate(order.createdAt)}</td>
+                    <td>
+                        <button class="admin-btn-small" onclick="viewOrder('${order.id}')">View</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function formatStatus(status) {
+            return status.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        }
+        
+        function formatDate(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleDateString('en-ZA', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        
+        async function viewOrder(orderId) {
+            try {
+                const response = await fetch(`/api/orders/${orderId}`, {
+                    credentials: 'include'
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load order details');
+                }
+                
+                const { order } = await response.json();
+                showOrderModal(order);
+            } catch (error) {
+                console.error('Error loading order details:', error);
+                showToast('Failed to load order details', 'error');
+            }
+        }
+        
+        function showOrderModal(order) {
+            const modal = document.getElementById('orderModal');
+            const modalBody = document.getElementById('orderModalBody');
+            
+            const itemsHTML = (order.items || []).map(item => `
+                <div style="display: flex; justify-content: space-between; padding: 1rem; border-bottom: 1px solid var(--glass-border);">
+                    <div>
+                        <strong>${item.productName}</strong><br>
+                        <span style="color: var(--text-secondary); font-size: 0.875rem;">
+                            ${item.brand} • Size ${item.size} • Qty ${item.quantity}
+                        </span>
+                    </div>
+                    <div style="text-align: right;">
+                        <strong>R${item.price * item.quantity}</strong>
+                    </div>
+                </div>
+            `).join('');
+            
+            modalBody.innerHTML = `
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="color: var(--accent-gold); margin-bottom: 1rem;">Order ${order.orderNumber}</h3>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1rem;">
+                        <div>
+                            <p style="color: var(--text-secondary); margin: 0 0 0.25rem;">Customer</p>
+                            <p style="margin: 0;"><strong>${order.customerName}</strong></p>
+                        </div>
+                        <div>
+                            <p style="color: var(--text-secondary); margin: 0 0 0.25rem;">Email</p>
+                            <p style="margin: 0;">${order.customerEmail}</p>
+                        </div>
+                        <div>
+                            <p style="color: var(--text-secondary); margin: 0 0 0.25rem;">Phone</p>
+                            <p style="margin: 0;">${order.customerPhone}</p>
+                        </div>
+                        <div>
+                            <p style="color: var(--text-secondary); margin: 0 0 0.25rem;">Order Date</p>
+                            <p style="margin: 0;">${formatDate(order.createdAt)}</p>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <p style="color: var(--text-secondary); margin: 0 0 0.25rem;">Delivery Address</p>
+                        <p style="margin: 0;">${order.deliveryAddress}, ${order.deliveryCity} ${order.deliveryPostalCode}</p>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 2rem;">
+                    <h4 style="margin-bottom: 1rem;">Order Items</h4>
+                    <div style="background: rgba(255, 255, 255, 0.03); border-radius: calc(var(--glass-radius) - 8px); overflow: hidden;">
+                        ${itemsHTML}
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 2rem;">
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+                        <span>Subtotal</span>
+                        <span>R${order.subtotal}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+                        <span>Delivery</span>
+                        <span>R${order.deliveryCost}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 1rem 0; border-top: 1px solid var(--glass-border); font-size: 1.25rem; font-weight: 700;">
+                        <span>Total</span>
+                        <span style="color: var(--accent-gold);">R${order.total}</span>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 2rem;">
+                    <h4 style="margin-bottom: 1rem;">Update Order Status</h4>
+                    <select id="orderStatusSelect" class="admin-form-select" style="margin-bottom: 1rem;">
+                        <option value="placed" ${order.orderStatus === 'placed' ? 'selected' : ''}>Placed</option>
+                        <option value="payment-confirmed" ${order.orderStatus === 'payment-confirmed' ? 'selected' : ''}>Payment Confirmed</option>
+                        <option value="preparing" ${order.orderStatus === 'preparing' ? 'selected' : ''}>Preparing</option>
+                        <option value="shipped" ${order.orderStatus === 'shipped' ? 'selected' : ''}>Shipped</option>
+                        <option value="out-for-delivery" ${order.orderStatus === 'out-for-delivery' ? 'selected' : ''}>Out for Delivery</option>
+                        <option value="delivered" ${order.orderStatus === 'delivered' ? 'selected' : ''}>Delivered</option>
+                        <option value="cancelled" ${order.orderStatus === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                    </select>
+                    <button class="admin-btn admin-btn-primary" onclick="updateOrderStatus('${order.id}')">
+                        Update Status
+                    </button>
+                </div>
+            `;
+            
+            modal.style.display = 'flex';
+        }
+        
+        function closeOrderModal() {
+            document.getElementById('orderModal').style.display = 'none';
+        }
+        
+        async function updateOrderStatus(orderId) {
+            const newStatus = document.getElementById('orderStatusSelect').value;
+            
+            try {
+                const response = await fetch(`/api/orders/${orderId}/status`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({ orderStatus: newStatus }),
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to update order status');
+                }
+                
+                showToast('Order status updated successfully', 'success');
+                closeOrderModal();
+                loadOrders(); // Reload orders
+            } catch (error) {
+                console.error('Error updating order status:', error);
+                showToast('Failed to update order status', 'error');
+            }
+        }
+        
+        // Load orders on page load
+        document.addEventListener('DOMContentLoaded', loadOrders);
+    </script>
+    
+    <style>
+        .admin-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .admin-modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+        }
+        
+        .admin-modal-content {
+            position: relative;
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--glass-border);
+            border-radius: var(--glass-radius);
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--glass-shadow);
+        }
+        
+        .admin-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .admin-modal-header h2 {
+            margin: 0;
+            color: var(--text-primary);
+        }
+        
+        .admin-modal-close {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 2rem;
+            cursor: pointer;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .admin-modal-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .admin-modal-body {
+            padding: 2rem;
+        }
+    </style>
+</body>
+</html>
+

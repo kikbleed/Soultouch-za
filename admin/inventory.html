@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management - Soultouch ZA Admin</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="admin-styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="admin-logo">
+                <h2>Soultouch ZA</h2>
+                <p>Admin Panel</p>
+            </div>
+            <nav class="admin-nav">
+                <a href="dashboard.html" class="admin-nav-link">
+                    <span>📊</span> Dashboard
+                </a>
+                <a href="orders.html" class="admin-nav-link">
+                    <span>📦</span> Orders
+                </a>
+                <a href="products.html" class="admin-nav-link">
+                    <span>👟</span> Products
+                </a>
+                <a href="inventory.html" class="admin-nav-link active">
+                    <span>📈</span> Inventory
+                </a>
+                <a href="../index.html" class="admin-nav-link">
+                    <span>🏠</span> View Store
+                </a>
+                <a href="#" class="admin-nav-link" id="logoutBtn">
+                    <span>🚪</span> Logout
+                </a>
+            </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="admin-main">
+            <header class="admin-header">
+                <div>
+                    <h1>Inventory Management</h1>
+                    <p>Manage stock levels for all products</p>
+                </div>
+            </header>
+            
+            <!-- Filter by Product -->
+            <section class="admin-section" style="margin-bottom: 1.5rem;">
+                <div class="admin-form-group">
+                    <label for="productFilter" class="admin-form-label">Filter by Product</label>
+                    <select id="productFilter" class="admin-form-select" onchange="filterInventory()">
+                        <option value="">All Products</option>
+                    </select>
+                </div>
+            </section>
+            
+            <!-- Inventory Table -->
+            <section class="admin-section">
+                <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                    <p style="color: var(--text-secondary); margin: 0;">
+                        <strong>Note:</strong> Run <code>npm run seed:inventory</code> to populate initial inventory levels.
+                    </p>
+                    <button class="admin-btn admin-btn-primary" onclick="saveAllChanges()">
+                        Save All Changes
+                    </button>
+                </div>
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Brand</th>
+                                <th>Size</th>
+                                <th>Stock Level</th>
+                                <th>Reserved</th>
+                                <th>Available</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTable">
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 2rem;">
+                                    Loading inventory...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <script src="admin.js"></script>
+    <script>
+        let allInventory = [];
+        let allProducts = [];
+        let changedItems = new Map();
+        
+        // Load products and inventory
+        async function loadData() {
+            try {
+                // Load products first
+                const productsResponse = await fetch('/api/products', {
+                    credentials: 'include'
+                });
+                
+                if (!productsResponse.ok) {
+                    throw new Error('Failed to load products');
+                }
+                
+                const productsData = await productsResponse.json();
+                allProducts = productsData.products || [];
+                
+                // Populate product filter
+                const productFilter = document.getElementById('productFilter');
+                productFilter.innerHTML = '<option value="">All Products</option>' +
+                    allProducts.map(p => `<option value="${p.id}">${p.brand} ${p.name}</option>`).join('');
+                
+                // Load all inventory
+                await loadInventory();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('inventoryTable').innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 2rem; color: #ff6b6b;">
+                            Error loading inventory data
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+        
+        async function loadInventory() {
+            try {
+                // For now, we'll load inventory for each product
+                // In a production app, you'd have a single endpoint to get all inventory
+                allInventory = [];
+                
+                for (const product of allProducts) {
+                    const response = await fetch(`/api/inventory/${product.id}`, {
+                        credentials: 'include'
+                    });
+                    
+                    if (response.ok) {
+                        const { inventory } = await response.json();
+                        inventory.forEach(inv => {
+                            allInventory.push({
+                                ...inv,
+                                product: product
+                            });
+                        });
+                    }
+                }
+                
+                renderInventory(allInventory);
+            } catch (error) {
+                console.error('Error loading inventory:', error);
+            }
+        }
+        
+        function filterInventory() {
+            const productId = document.getElementById('productFilter').value;
+            
+            if (!productId) {
+                renderInventory(allInventory);
+            } else {
+                const filtered = allInventory.filter(inv => inv.productId === productId);
+                renderInventory(filtered);
+            }
+        }
+        
+        function renderInventory(inventory) {
+            const tbody = document.getElementById('inventoryTable');
+            
+            if (inventory.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 2rem;">
+                            No inventory records found. Run <code>npm run seed:inventory</code> to populate inventory.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = inventory.map(inv => {
+                const product = inv.product || {};
+                const isLowStock = inv.available <= 5;
+                const isOutOfStock = inv.available <= 0;
+                
+                return `
+                    <tr>
+                        <td><strong>${product.name || 'Unknown'}</strong></td>
+                        <td>${product.brand || 'Unknown'}</td>
+                        <td>${inv.size}</td>
+                        <td>
+                            <input 
+                                type="number" 
+                                value="${inv.stockLevel}" 
+                                min="0" 
+                                class="admin-form-input" 
+                                style="width: 100px; padding: 0.5rem;"
+                                onchange="markChanged('${inv.id}', this.value)"
+                                id="stock-${inv.id}"
+                            >
+                        </td>
+                        <td>${inv.reserved || 0}</td>
+                        <td>
+                            <span style="color: ${isOutOfStock ? '#ef4444' : isLowStock ? '#ffa500' : '#22c55e'}; font-weight: 600;">
+                                ${inv.available}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="admin-btn-small" onclick="updateSingleItem('${inv.id}')">
+                                Update
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        function markChanged(inventoryId, newValue) {
+            changedItems.set(inventoryId, parseInt(newValue));
+        }
+        
+        async function updateSingleItem(inventoryId) {
+            const input = document.getElementById(`stock-${inventoryId}`);
+            const newValue = parseInt(input.value);
+            
+            try {
+                const response = await fetch(`/api/inventory/${inventoryId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({ stockLevel: newValue }),
+                });
+                
+                if (!response.ok) {
+                    if (response.status === 403) {
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    throw new Error('Failed to update inventory');
+                }
+                
+                showToast('Inventory updated successfully', 'success');
+                changedItems.delete(inventoryId);
+                await loadInventory();
+            } catch (error) {
+                console.error('Error updating inventory:', error);
+                showToast('Failed to update inventory', 'error');
+            }
+        }
+        
+        async function saveAllChanges() {
+            if (changedItems.size === 0) {
+                showToast('No changes to save', 'info');
+                return;
+            }
+            
+            try {
+                const updates = Array.from(changedItems.entries()).map(([id, stockLevel]) => ({
+                    id,
+                    stockLevel
+                }));
+                
+                const response = await fetch('/api/admin/inventory', {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({ updates }),
+                });
+                
+                if (!response.ok) {
+                    if (response.status === 403) {
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    throw new Error('Failed to update inventory');
+                }
+                
+                showToast(`${updates.length} inventory items updated successfully`, 'success');
+                changedItems.clear();
+                await loadInventory();
+            } catch (error) {
+                console.error('Error saving changes:', error);
+                showToast('Failed to save changes', 'error');
+            }
+        }
+        
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', loadData);
+    </script>
+</body>
+</html>
+

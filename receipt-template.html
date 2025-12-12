@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt - Soultouch ZA</title>
+    <style>
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', Arial, Helvetica, sans-serif;
+            background-color: #ffffff;
+            color: #0A0A0B;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+        
+        .receipt-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 40px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .receipt-header {
+            text-align: center;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #C4B998;
+            margin-bottom: 30px;
+        }
+        
+        .receipt-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #0A0A0B;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+        
+        .receipt-header p {
+            font-size: 14px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .receipt-section {
+            margin-bottom: 30px;
+        }
+        
+        .receipt-section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0A0A0B;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 8px;
+        }
+        
+        .receipt-info {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .receipt-info:last-child {
+            border-bottom: none;
+        }
+        
+        .receipt-info-label {
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .receipt-info-value {
+            font-size: 14px;
+            color: #0A0A0B;
+            font-weight: 600;
+            text-align: right;
+        }
+        
+        .receipt-items {
+            margin: 20px 0;
+        }
+        
+        .receipt-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .receipt-item:last-child {
+            border-bottom: none;
+        }
+        
+        .receipt-item-details {
+            flex: 1;
+        }
+        
+        .receipt-item-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #0A0A0B;
+            margin-bottom: 4px;
+        }
+        
+        .receipt-item-meta {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+        
+        .receipt-item-price {
+            font-size: 16px;
+            font-weight: 700;
+            color: #C4B998;
+            text-align: right;
+        }
+        
+        .receipt-totals {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+        }
+        
+        .receipt-total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+        }
+        
+        .receipt-total-label {
+            font-size: 16px;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .receipt-total-value {
+            font-size: 16px;
+            color: #0A0A0B;
+            font-weight: 600;
+        }
+        
+        .receipt-total-final {
+            margin-top: 10px;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .receipt-total-final .receipt-total-label {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0A0A0B;
+        }
+        
+        .receipt-total-final .receipt-total-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #C4B998;
+        }
+        
+        .receipt-footer {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid #e0e0e0;
+            text-align: center;
+        }
+        
+        .receipt-footer p {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        
+        .receipt-footer .demo-notice {
+            font-size: 11px;
+            color: #999;
+            font-style: italic;
+            margin-top: 15px;
+        }
+        
+        .receipt-thank-you {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 30px;
+            border-top: 2px solid #C4B998;
+        }
+        
+        .receipt-thank-you h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0A0A0B;
+            margin-bottom: 8px;
+        }
+        
+        .receipt-thank-you p {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .print-button {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .print-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: #1A1B1D;
+            color: #E8E8E8;
+            text-decoration: none;
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        
+        .print-btn:hover {
+            background-color: #2A2B2E;
+        }
+    </style>
+</head>
+<body>
+    <div class="receipt-container">
+        <!-- Header -->
+        <div class="receipt-header">
+            <img src="/assets/soultouch-za.png" style="width:220px; margin-bottom:30px; filter:contrast(1.35) brightness(1.2);" alt="Soul Touch Movement Logo" />
+            <p>Order Receipt</p>
+        </div>
+        
+        <!-- Order Details -->
+        <div class="receipt-section">
+            <h2 class="receipt-section-title">Order Information</h2>
+            <div class="receipt-info">
+                <span class="receipt-info-label">Order Number</span>
+                <span class="receipt-info-value" id="receiptOrderNumber">-</span>
+            </div>
+            <div class="receipt-info">
+                <span class="receipt-info-label">Order Date</span>
+                <span class="receipt-info-value" id="receiptOrderDate">-</span>
+            </div>
+            <div class="receipt-info">
+                <span class="receipt-info-label">Payment Method</span>
+                <span class="receipt-info-value">Demo Mode</span>
+            </div>
+        </div>
+        
+        <!-- Customer Details -->
+        <div class="receipt-section">
+            <h2 class="receipt-section-title">Customer Details</h2>
+            <div class="receipt-info">
+                <span class="receipt-info-label">Name</span>
+                <span class="receipt-info-value" id="receiptCustomerName">-</span>
+            </div>
+            <div class="receipt-info">
+                <span class="receipt-info-label">Email</span>
+                <span class="receipt-info-value" id="receiptCustomerEmail">-</span>
+            </div>
+            <div class="receipt-info">
+                <span class="receipt-info-label">Phone</span>
+                <span class="receipt-info-value" id="receiptCustomerPhone">-</span>
+            </div>
+            <div class="receipt-info">
+                <span class="receipt-info-label">Delivery Address</span>
+                <span class="receipt-info-value" id="receiptDeliveryAddress">-</span>
+            </div>
+        </div>
+        
+        <!-- Order Items -->
+        <div class="receipt-section">
+            <h2 class="receipt-section-title">Order Items</h2>
+            <div class="receipt-items" id="receiptItemsList">
+                <!-- Items will be populated by JavaScript -->
+            </div>
+        </div>
+        
+        <!-- Totals -->
+        <div class="receipt-section">
+            <div class="receipt-totals">
+                <div class="receipt-total-row">
+                    <span class="receipt-total-label">Subtotal</span>
+                    <span class="receipt-total-value" id="receiptSubtotal">R0</span>
+                </div>
+                <div class="receipt-total-row">
+                    <span class="receipt-total-label">Delivery</span>
+                    <span class="receipt-total-value" id="receiptDelivery">R0</span>
+                </div>
+                <div class="receipt-total-row receipt-total-final">
+                    <span class="receipt-total-label">Total</span>
+                    <span class="receipt-total-value" id="receiptTotal">R0</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Thank You -->
+        <div class="receipt-thank-you">
+            <h2>Thank You!</h2>
+            <p>We appreciate your business</p>
+        </div>
+        
+        <!-- Footer -->
+        <div class="receipt-footer">
+            <p><strong>Soultouch ZA</strong></p>
+            <p>123 Business Street, City, 0000, South Africa</p>
+            <p class="demo-notice">This is a demo receipt. No payment was processed.</p>
+        </div>
+        
+        <!-- Print Button (hidden when printing) -->
+        <div class="print-button no-print">
+            <button class="print-btn" onclick="window.print()">Print Receipt</button>
+        </div>
+    </div>
+    
+    <script>
+        // Load receipt data from localStorage
+        function loadReceiptData() {
+            try {
+                const orderJson = localStorage.getItem('soultouch_order');
+                if (!orderJson) {
+                    document.body.innerHTML = '<div style="text-align: center; padding: 40px;"><p>No order data found.</p></div>';
+                    return;
+                }
+                
+                const orderData = JSON.parse(orderJson);
+                
+                // Generate order number
+                const orderNumber = generateOrderNumber();
+                document.getElementById('receiptOrderNumber').textContent = orderNumber;
+                
+                // Set order date
+                const orderDate = new Date(orderData.orderDate);
+                document.getElementById('receiptOrderDate').textContent = orderDate.toLocaleDateString('en-ZA', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                
+                // Customer details
+                document.getElementById('receiptCustomerName').textContent = orderData.customer.fullName;
+                document.getElementById('receiptCustomerEmail').textContent = orderData.customer.email;
+                document.getElementById('receiptCustomerPhone').textContent = orderData.customer.phone;
+                document.getElementById('receiptDeliveryAddress').textContent = 
+                    `${orderData.customer.address}, ${orderData.customer.city} ${orderData.customer.postalCode}`;
+                
+                // Render items
+                const itemsList = document.getElementById('receiptItemsList');
+                itemsList.innerHTML = '';
+                
+                orderData.items.forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'receipt-item';
+                    itemDiv.innerHTML = `
+                        <div class="receipt-item-details">
+                            <div class="receipt-item-name">${item.name}</div>
+                            <div class="receipt-item-meta">${item.brand} • Size ${item.size} • Qty ${item.quantity}</div>
+                        </div>
+                        <div class="receipt-item-price">R${item.price * item.quantity}</div>
+                    `;
+                    itemsList.appendChild(itemDiv);
+                });
+                
+                // Totals
+                document.getElementById('receiptSubtotal').textContent = `R${orderData.totals.subtotal}`;
+                document.getElementById('receiptDelivery').textContent = `R${orderData.totals.delivery}`;
+                document.getElementById('receiptTotal').textContent = `R${orderData.totals.total}`;
+                
+            } catch (error) {
+                console.error('Error loading receipt data:', error);
+                document.body.innerHTML = '<div style="text-align: center; padding: 40px;"><p>Error loading receipt data.</p></div>';
+            }
+        }
+        
+        function generateOrderNumber() {
+            const timestamp = Date.now();
+            return `ST-${timestamp.toString().slice(-8)}`;
+        }
+        
+        // Load data when page loads
+        document.addEventListener('DOMContentLoaded', loadReceiptData);
+    </script>
+</body>
+</html>
+

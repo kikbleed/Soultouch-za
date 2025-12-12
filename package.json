@@ -1,0 +1,29 @@
+{
+  "name": "soultouch-za",
+  "version": "1.0.0",
+  "description": "Soultouch ZA full-stack scaffold with Express + InstantDB",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "seed:products": "node scripts/seed-products.js",
+    "seed:inventory": "node scripts/seed-inventory.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@instantdb/admin": "^0.22.86",
+    "@instantdb/core": "^0.22.86",
+    "@instantdb/react": "^0.22.86",
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "nodemailer": "^6.9.7",
+    "stripe": "^20.0.0"
+  }
+}

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soultouch ZA - Premium Sneaker Resale</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 
+        ============================================
+        MINI README - MAINTENANCE GUIDE
+        ============================================
+        
+        HOW TO REPLACE PLACEHOLDER IMAGES:
+        1. Replace the CSS background-color in .product-image with actual image URLs
+        2. Recommended image dimensions: 800x800px (square format)
+        3. Update the 'img' property in the products array in script.js
+        4. Ensure images are optimized for web (WebP format recommended)
+        
+        HOW TO ADD/UPDATE PRODUCTS:
+        1. Edit the 'products' array in script.js
+        2. Follow the structure: { brand, name, price, img }
+        3. Brand must be exactly "Nike", "Puma", or "Adidas"
+        4. Price format: "R####" (e.g., "R2799")
+        5. Image path: "assets/[brand]-[model].jpg"
+        
+        RECOMMENDED IMAGE DIMENSIONS:
+        - Product images: 800x800px (1:1 aspect ratio)
+        - Hero image: 1920x1080px (16:9 aspect ratio)
+        - Logo: 200x60px (transparent PNG recommended)
+    -->
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="assets/soultouch.png" alt="Soul Touch Movement Logo" />
+            </a>
+            <ul class="nav-links">
+                <li><a href="#home" class="nav-link">Home</a></li>
+                <li><a href="#trending" class="nav-link">Trending</a></li>
+                <li><a href="#products" class="nav-link">All Products</a></li>
+                <li><a href="tracking.html" class="nav-link">Track Order</a></li>
+            </ul>
+            <div class="nav-auth">
+                <a href="signin.html" class="auth-button" id="authButton">Sign In</a>
+                <div class="user-profile" id="userProfile" style="display: none;">
+                    <span class="user-email" id="userEmail"></span>
+                </div>
+            </div>
+            <div class="cart-icon">
+                <a href="cart.html" class="cart-link">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    <span class="cart-count">0</span>
+                </a>
+            </div>
+            <button class="mobile-menu-toggle" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <div class="hero-glass">
+                <h1 class="hero-title">Premium Sneakers</h1>
+                <p class="hero-subtitle">Discover the finest collection of Nike, Puma & Adidas</p>
+                <a href="#products" class="hero-button">Shop Now</a>
+            </div>
+        </div>
+        <div class="hero-background"></div>
+    </section>
+
+    <!-- Trending Sneakers Section -->
+    <section id="trending" class="trending-section">
+        <div class="container">
+            <h2 class="section-title">Trending Now</h2>
+            <div class="trending-grid" id="trendingGrid">
+                <!-- Dynamically populated by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Brand Filter Section -->
+    <section class="filter-section">
+        <div class="container">
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-brand="all">All</button>
+                <button class="filter-btn" data-brand="Nike">Nike</button>
+                <button class="filter-btn" data-brand="Puma">Puma</button>
+                <button class="filter-btn" data-brand="Adidas">Adidas</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Product Grid Section -->
+    <section id="products" class="products-section">
+        <div class="container">
+            <h2 class="section-title">All Products</h2>
+            <div class="products-grid" id="productsGrid">
+                <!-- Dynamically populated by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-logo">
+                <img src="assets/soultouch.png" alt="Soul Touch Movement Logo" />
+            </div>
+            <div class="footer-links">
+                <a href="about.html" class="footer-link">About Us</a>
+                <a href="contact.html" class="footer-link">Contact</a>
+                <a href="shipping.html" class="footer-link">Shipping & Returns</a>
+                <a href="terms.html" class="footer-link">Terms & Conditions</a>
+            </div>
+            <p class="footer-text">© 2025 Soultouch ZA — Designed for demonstration purposes.</p>
+        </div>
+    </footer>
+
+    <!-- Product Detail Modal -->
+    <div id="productDetailModal" class="product-detail-modal">
+        <div class="modal-overlay"></div>
+        <div class="product-detail-panel">
+            <button class="product-detail-close" aria-label="Close product detail">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            <div class="product-detail-content">
+                <div class="product-gallery">
+                    <div class="product-main-image-container">
+                        <div class="product-main-image">
+                            <img id="productMainImage" src="" alt="" />
+                            <button class="gallery-arrow left" aria-label="Previous image">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="15 18 9 12 15 6"></polyline>
+                                </svg>
+                            </button>
+                            <button class="gallery-arrow right" aria-label="Next image">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="9 18 15 12 9 6"></polyline>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="product-thumbnails" id="productThumbnails">
+                            <!-- Thumbnails will be dynamically generated -->
+                        </div>
+                    </div>
+                </div>
+                <div class="product-detail-info">
+                    <div class="product-detail-brand"></div>
+                    <h2 class="product-detail-name"></h2>
+                    <div class="product-detail-price"></div>
+                    <p class="product-detail-description"></p>
+                    <div class="product-detail-sizes">
+                        <h3 class="sizes-title">Available Sizes</h3>
+                        <div class="size-selector"></div>
+                        <div class="size-error" style="display: none;">
+                            Please select a size before adding to cart.
+                        </div>
+                    </div>
+                    <button class="add-to-cart-btn">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <span class="toast-message"></span>
+    </div>
+
+    <script src="products.js"></script>
+    <script src="client-db.js"></script>
+    <script src="auth.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
+

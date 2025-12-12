@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products Management - Soultouch ZA Admin</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="admin-styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="admin-logo">
+                <h2>Soultouch ZA</h2>
+                <p>Admin Panel</p>
+            </div>
+            <nav class="admin-nav">
+                <a href="dashboard.html" class="admin-nav-link">
+                    <span>📊</span> Dashboard
+                </a>
+                <a href="orders.html" class="admin-nav-link">
+                    <span>📦</span> Orders
+                </a>
+                <a href="products.html" class="admin-nav-link active">
+                    <span>👟</span> Products
+                </a>
+                <a href="inventory.html" class="admin-nav-link">
+                    <span>📈</span> Inventory
+                </a>
+                <a href="../index.html" class="admin-nav-link">
+                    <span>🏠</span> View Store
+                </a>
+                <a href="#" class="admin-nav-link" id="logoutBtn">
+                    <span>🚪</span> Logout
+                </a>
+            </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="admin-main">
+            <header class="admin-header">
+                <div>
+                    <h1>Products Management</h1>
+                    <p>Manage your product catalog</p>
+                </div>
+            </header>
+            
+            <!-- Products Table -->
+            <section class="admin-section">
+                <div style="margin-bottom: 1.5rem;">
+                    <p style="color: var(--text-secondary);">
+                        <strong>Note:</strong> Products are managed through the seed script. 
+                        Use <code>npm run seed:products</code> to populate products from the products.js file.
+                        You can activate/deactivate products below.
+                    </p>
+                </div>
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Brand</th>
+                                <th>Price</th>
+                                <th>Sizes</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTable">
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 2rem;">
+                                    Loading products...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <script src="admin.js"></script>
+    <script>
+        let allProducts = [];
+        
+        // Load all products
+        async function loadProducts() {
+            try {
+                const response = await fetch('/api/products', {
+                    credentials: 'include'
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load products');
+                }
+                
+                const data = await response.json();
+                allProducts = data.products || [];
+                renderProducts(allProducts);
+            } catch (error) {
+                console.error('Error loading products:', error);
+                document.getElementById('productsTable').innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 2rem; color: #ff6b6b;">
+                            Error loading products
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+        
+        function renderProducts(products) {
+            const tbody = document.getElementById('productsTable');
+            
+            if (products.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 2rem;">
+                            No products found. Run <code>npm run seed:products</code> to populate products.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = products.map(product => {
+                const sizes = Array.isArray(product.sizes) ? product.sizes : [];
+                const isActive = product.active !== false;
+                
+                return `
+                    <tr>
+                        <td>${product.legacyId || product.id.substring(0, 8)}</td>
+                        <td><strong>${product.name}</strong></td>
+                        <td>${product.brand}</td>
+                        <td>R${product.price}</td>
+                        <td>${sizes.join(', ')}</td>
+                        <td>
+                            <span class="admin-status-badge ${isActive ? 'status-delivered' : 'status-cancelled'}">
+                                ${isActive ? 'Active' : 'Inactive'}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="admin-btn-small" onclick="toggleProductStatus('${product.id}', ${!isActive})">
+                                ${isActive ? 'Deactivate' : 'Activate'}
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        async function toggleProductStatus(productId, newStatus) {
+            try {
+                const response = await fetch('/api/admin/products', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        id: productId,
+                        active: newStatus
+                    }),
+                });
+                
+                if (!response.ok) {
+                    if (response.status === 403) {
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    throw new Error('Failed to update product');
+                }
+                
+                showToast(`Product ${newStatus ? 'activated' : 'deactivated'} successfully`, 'success');
+                loadProducts(); // Reload products
+            } catch (error) {
+                console.error('Error updating product:', error);
+                showToast('Failed to update product', 'error');
+            }
+        }
+        
+        // Load products on page load
+        document.addEventListener('DOMContentLoaded', loadProducts);
+    </script>
+</body>
+</html>
+

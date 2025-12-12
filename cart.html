@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart - Soultouch ZA</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="/assets/soultouch-za.png" alt="Soul Touch Movement Logo" />
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html#home" class="nav-link">Home</a></li>
+                <li><a href="index.html#trending" class="nav-link">Trending</a></li>
+                <li><a href="index.html#products" class="nav-link">All Products</a></li>
+                <li><a href="tracking.html" class="nav-link">Track Order</a></li>
+            </ul>
+            <div class="cart-icon">
+                <a href="cart.html" class="cart-link">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    <span class="cart-count">0</span>
+                </a>
+            </div>
+            <button class="mobile-menu-toggle" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Cart Page Content -->
+    <section class="cart-section">
+        <div class="container">
+            <h1 class="cart-page-title">Your Cart</h1>
+            
+            <div class="cart-layout">
+                <!-- Cart Items Container -->
+                <div class="cart-items-container">
+                    <div id="cartItems" class="cart-items-list">
+                        <!-- Cart items will be dynamically rendered here -->
+                    </div>
+                    <div id="emptyCart" class="empty-cart" style="display: none;">
+                        <div class="empty-cart-content">
+                            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.5; margin-bottom: 1.5rem;">
+                                <circle cx="9" cy="21" r="1"></circle>
+                                <circle cx="20" cy="21" r="1"></circle>
+                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                            </svg>
+                            <h2>Your cart is empty</h2>
+                            <p>Start adding some premium sneakers to your cart!</p>
+                            <a href="index.html#products" class="continue-shopping-btn">Continue Shopping</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cart Summary -->
+                <div class="cart-summary">
+                    <div class="cart-summary-content">
+                        <h2 class="summary-title">Order Summary</h2>
+                        <div class="summary-details">
+                            <div class="summary-row">
+                                <span>Subtotal</span>
+                                <span id="subtotal">R0</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Estimated Shipping</span>
+                                <span>R100</span>
+                            </div>
+                            <div class="summary-divider"></div>
+                            <div class="summary-row total-row">
+                                <span>Total</span>
+                                <span id="total">R100</span>
+                            </div>
+                        </div>
+                        <button class="checkout-btn" id="checkoutBtn">Proceed to Checkout</button>
+                        <a href="index.html#products" class="continue-shopping-link">Continue Shopping</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <span class="toast-message"></span>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="cart.js"></script>
+</body>
+</html>
+

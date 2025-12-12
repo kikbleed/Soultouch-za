@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - Soultouch ZA</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .signin-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem;
+        }
+
+        .signin-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 3rem;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .signin-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .signin-header h1 {
+            color: white;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .signin-header p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+        }
+
+        .signin-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            color: white;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .form-group input {
+            padding: 0.875rem 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-primary {
+            padding: 0.875rem 1.5rem;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 0.5rem;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            padding: 0.875rem 1.5rem;
+            background: transparent;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-secondary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-link {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            text-decoration: underline;
+            font-size: 0.9rem;
+            padding: 0.5rem;
+        }
+
+        .btn-link:hover {
+            color: white;
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            color: white;
+            padding: 0.875rem 1rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .success-message {
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid rgba(34, 197, 94, 0.5);
+            color: white;
+            padding: 0.875rem 1rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .code-input-group {
+            display: none;
+        }
+
+        .code-input-group.show {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .code-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 0.5rem;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .back-link a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .back-link a:hover {
+            color: white;
+        }
+
+        #profileSection {
+            display: none;
+        }
+
+        #testSection {
+            display: none;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        #testResult {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="signin-container">
+        <div class="signin-card">
+            <div class="signin-header">
+                <h1>Welcome Back</h1>
+                <p>Sign in to your Soultouch ZA account</p>
+            </div>
+
+            <div class="error-message" id="errorMessage"></div>
+            <div class="success-message" id="successMessage"></div>
+            <div class="success-message show" id="initMessage" style="background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.5);">
+                <span class="loading-spinner"></span> Initializing authentication...
+            </div>
+
+            <!-- Sign-in Form -->
+            <form class="signin-form" id="signinForm">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        placeholder="your.email@example.com" 
+                        required
+                        autocomplete="email"
+                    >
+                </div>
+
+                <div class="code-input-group" id="codeInputGroup">
+                    <div class="form-group">
+                        <label for="code">Magic Code</label>
+                        <input 
+                            type="text" 
+                            id="code" 
+                            name="code" 
+                            placeholder="Enter the code from your email" 
+                            required
+                            autocomplete="one-time-code"
+                        >
+                    </div>
+                    <div class="code-actions">
+                        <button type="button" class="btn-link" id="resendBtn">Resend Code</button>
+                        <button type="button" class="btn-link" id="changeEmailBtn">Use Different Email</button>
+                    </div>
+                </div>
+
+                <button type="button" class="btn-primary" id="sendMagicCode">
+                    <span id="submitText">Send Magic Code</span>
+                </button>
+            </form>
+
+            <!-- Profile Form (shown after successful login if no profile exists) -->
+            <div id="profileSection">
+                <div class="signin-header" style="margin-top: 1rem;">
+                    <h2 style="font-size: 1.5rem; color: white;">Complete Your Profile</h2>
+                    <p>Please provide your information to continue</p>
+                </div>
+                
+                <form class="signin-form" id="profileForm">
+                    <div class="form-group">
+                        <label for="profileFullName">Full Name *</label>
+                        <input 
+                            type="text" 
+                            id="profileFullName" 
+                            name="fullName" 
+                            placeholder="John" 
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="profileSurname">Surname *</label>
+                        <input 
+                            type="text" 
+                            id="profileSurname" 
+                            name="surname" 
+                            placeholder="Doe" 
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="profileEmail">Email</label>
+                        <input 
+                            type="email" 
+                            id="profileEmail" 
+                            name="email" 
+                            placeholder="your.email@example.com"
+                            readonly
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="profilePhone">Phone (optional)</label>
+                        <input 
+                            type="tel" 
+                            id="profilePhone" 
+                            name="phone" 
+                            placeholder="+27 12 345 6789"
+                        >
+                    </div>
+
+                    <button type="submit" class="btn-primary">
+                        Save Profile
+                    </button>
+                </form>
+
+                <!-- Test Section -->
+                <div id="testSection">
+                    <h3 style="color: white; font-size: 1.1rem; margin-bottom: 0.5rem;">Database Test</h3>
+                    <button type="button" class="btn-secondary" id="writeTestBtn">Write Test</button>
+                    <div id="testResult"></div>
+                </div>
+            </div>
+
+            <div class="back-link">
+                <a href="index.html">← Back to Home</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load InstantDB client first -->
+    <script type="module" src="/client-db.js"></script>
+    <!-- Then load signin logic -->
+    <script type="module" src="/signin.js"></script>
+</body>
+</html>
